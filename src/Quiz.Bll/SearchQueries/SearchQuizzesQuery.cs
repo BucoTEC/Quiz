@@ -24,5 +24,6 @@ namespace Quiz.Bll.SearchQueries
             get => _search ?? "";
             set => _search = value.ToLower();
         }
+        public bool IncludeQuestions { get; set; } = false;
     }
 }

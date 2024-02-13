@@ -8,18 +8,20 @@ using Quiz.Dal.Entities;
 
 namespace Quiz.Dal.Specifications.QuizSearch
 {
-    public class SearchQuizzesSpecification : BaseSpecification<QuizEntity>
+    public class QuizzesSearchSpecification : BaseSpecification<QuizEntity>
     {
-        public SearchQuizzesSpecification(QuizSearchParams quizSearchParams)
+        public QuizzesSearchSpecification(QuizSearchParams quizSearchParams)
         : base(x => string.IsNullOrEmpty(quizSearchParams.Search) || x.Name.ToLower().Contains(quizSearchParams.Search))
         {
             ApplyPaging(quizSearchParams.PageSize * (quizSearchParams.PageIndex - 1), quizSearchParams.PageSize);
+
+            if (quizSearchParams.IncludeQuestions is true) AddInclude(o => o.Questions);
 
             if (!string.IsNullOrEmpty(quizSearchParams.Sort))
             {
                 switch (quizSearchParams.Sort)
                 {
-                    case "oldest":
+                    case "oldest": // TODO change to enum
                         AddOrderBy(p => p.CreatedAt);
                         break;
                     case "newest":

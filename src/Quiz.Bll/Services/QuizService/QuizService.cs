@@ -53,8 +53,8 @@ namespace Quiz.Bll.Services.QuizService
         public async Task<Pagination<QuizResponseDto>> SearchQuizzes(SearchQuizzesQuery searchQuizzesQuery)
         {
             var quizSearchParams = BuildQuizSearchParams(searchQuizzesQuery);
-            var countSpec = new SearchQuizzesCountSpecification(quizSearchParams);
-            var spec = new SearchQuizzesSpecification(quizSearchParams);
+            var countSpec = new QuizzesCountSpecification(quizSearchParams);
+            var spec = new QuizzesSearchSpecification(quizSearchParams);
 
             var totalCountOfQuizzes = await _unitOfWork.QuizRepository.CountAsync(countSpec);
             var quizzes = await _unitOfWork.QuizRepository.ListAsync(spec);
@@ -89,7 +89,8 @@ namespace Quiz.Bll.Services.QuizService
                 PageIndex = searchQuizzesQuery.PageIndex,
                 PageSize = searchQuizzesQuery.PageSize,
                 Sort = searchQuizzesQuery.Sort,
-                Search = searchQuizzesQuery.Search
+                Search = searchQuizzesQuery.Search,
+                IncludeQuestions = searchQuizzesQuery.IncludeQuestions
             };
         }
     }

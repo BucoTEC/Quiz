@@ -15,5 +15,7 @@ namespace Quiz.Dal.Dtos
 
         public string? Search { get; set; }
 
+        public bool IncludeQuestions { get; set; } = false;
+
     }
 }

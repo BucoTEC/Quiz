@@ -8,9 +8,9 @@ using Quiz.Dal.Entities;
 
 namespace Quiz.Dal.Specifications.QuizSearch
 {
-    public class SearchQuizzesCountSpecification : BaseSpecification<QuizEntity>
+    public class QuizzesCountSpecification : BaseSpecification<QuizEntity>
     {
-        public SearchQuizzesCountSpecification(QuizSearchParams quizSearchParams)
+        public QuizzesCountSpecification(QuizSearchParams quizSearchParams)
         : base(x => string.IsNullOrEmpty(quizSearchParams.Search) || x.Name.ToLower().Contains(quizSearchParams.Search))
         {
         }
