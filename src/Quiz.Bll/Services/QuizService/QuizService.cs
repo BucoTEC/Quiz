@@ -18,9 +18,19 @@ namespace Quiz.Bll.Services.QuizService
 
         public async Task<QuizResponseDto> CreateQuiz(CreateQuizDto createQuizDto)
         {
-            // TODO check if quiz with same name exists if yes throw exception
+            var spec = new QuizWithQuestionsSpecification(createQuizDto.Name);
 
-            //TODO check that questions coming in has unique question text name
+            var existingQuiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(spec);
+            if (existingQuiz != null)
+            {
+                throw new Exception("Quiz with this name already exists");
+            }
+
+            // TODO check names for duplicates throw exception if same are in list
+            //TODO check that questions coming in has unique question text name else throw exception
+
+            // TODO check for duplicates if duplicates found throw exception
+            // TODO check if incoming req contains questionIds if yes get those questions and add them to the exist quiz list
 
             var newQuiz = BuildQuizEntity(createQuizDto);
 
@@ -48,7 +58,6 @@ namespace Quiz.Bll.Services.QuizService
             return BuildQuizResponse(quiz);
 
         }
-
 
         public async Task<Pagination<QuizResponseDto>> SearchQuizzes(SearchQuizzesQuery searchQuizzesQuery)
         {

@@ -13,5 +13,10 @@ namespace Quiz.Dal.Specifications.QuizSearch
         {
             AddInclude(o => o.Questions);
         }
+
+        public QuizWithQuestionsSpecification(string name) : base(x => x.Name.ToLower() == name.ToLower())
+        {
+            AddInclude(o => o.Questions);
+        }
     }
 }
