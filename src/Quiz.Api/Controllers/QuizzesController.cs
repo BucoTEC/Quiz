@@ -22,9 +22,9 @@ namespace Quiz.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<QuizResponseDto>> GetQuizById([FromRoute] Guid id)
+        public async Task<ActionResult<QuizResponseDto>> GetQuizById([FromRoute] Guid id, [FromQuery] bool includeQuestions = false)
         {
-            return await _quizService.GetQuizById(id);
+            return await _quizService.GetQuizById(id, includeQuestions);
         }
     }
 }

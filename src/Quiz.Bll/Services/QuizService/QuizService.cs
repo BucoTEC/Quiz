@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Quiz.Bll.Dtos;
 using Quiz.Dal.Entities;
 using Quiz.Dal.Repositories.Uow;
+using Quiz.Dal.Specifications;
 
 namespace Quiz.Bll.Services.QuizService
 {
@@ -27,10 +28,22 @@ namespace Quiz.Bll.Services.QuizService
 
         }
 
-        public async Task<QuizResponseDto> GetQuizById(Guid id)
+        public async Task<QuizResponseDto> GetQuizById(Guid id, bool includeQuestions)
         {
-            var quiz = await _unitOfWork.QuizRepository.GetByIdAsync(id) ?? throw new Exception("No quiz with this id");
+            QuizEntity quiz;
+
+            if (includeQuestions)
+            {
+                var spec = new QuizWithQuestionsSpecification(id);
+                quiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(spec) ?? throw new Exception("No quiz with this id");
+            }
+            else
+            {
+                quiz = await _unitOfWork.QuizRepository.GetByIdAsync(id) ?? throw new Exception("No quiz with this id");
+            }
+
             return BuildQuizResponse(quiz);
+
         }
 
         private static QuizEntity BuildQuizEntity(CreateQuizDto createQuizDto)
@@ -39,7 +52,7 @@ namespace Quiz.Bll.Services.QuizService
             var quiz = new QuizEntity
             {
                 Name = createQuizDto.Name,
-                Questions = questions?.ToList()
+                Questions = questions?.ToList() ?? []
             };
 
             return quiz;

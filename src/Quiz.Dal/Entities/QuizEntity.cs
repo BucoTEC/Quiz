@@ -9,6 +9,6 @@ namespace Quiz.Dal.Entities
     {
         public string Name { get; set; } = string.Empty;
 
-        public List<QuestionEntity>? Questions { get; set; }
+        public List<QuestionEntity> Questions { get; set; } = [];
     }
 }

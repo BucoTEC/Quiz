@@ -10,7 +10,7 @@ namespace Quiz.Bll.Services.QuizService
     {
         Task<QuizResponseDto> CreateQuiz(CreateQuizDto createQuizDto);
 
-        Task<QuizResponseDto> GetQuizById(Guid id);
+        Task<QuizResponseDto> GetQuizById(Guid id, bool includeQuestions);
 
     }
 }
