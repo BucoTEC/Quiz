@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Quiz.Bll.Dtos;
+using Quiz.Bll.Helpers;
 using Quiz.Bll.SearchQueries;
 using Quiz.Dal.Dtos;
 using Quiz.Dal.Entities;
 using Quiz.Dal.Repositories.Uow;
 using Quiz.Dal.Specifications;
+using Quiz.Dal.Specifications.QuestionSearch;
 using Quiz.Dal.Specifications.QuizSearch;
 
 namespace Quiz.Bll.Services.QuizService
@@ -71,6 +73,24 @@ namespace Quiz.Bll.Services.QuizService
             var data = quizzes.Select(quiz => BuildQuizResponse(quiz));
 
             return new Pagination<QuizResponseDto>(quizSearchParams.PageIndex, quizSearchParams.PageSize, totalCountOfQuizzes, data);
+        }
+
+
+        public async Task<QuizResponseDto> UpdateQuiz(Guid id, UpdateQuizDto updateQuizDto)
+        {
+            var quizSpec = new QuizWithQuestionsSpecification(id);
+            var quiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(quizSpec) ?? throw new Exception("No quiz with this id");
+
+            var questionSpec = new QuestionsSearchSpecification(updateQuizDto.QuestionsIds?.Distinct().ToList() ?? []);
+            var questions = await _unitOfWork.QuestionRepository.ListAsync(questionSpec);
+
+            quiz.Name = updateQuizDto.Name;
+            quiz.Questions = [.. questions];
+
+            _unitOfWork.QuizRepository.Update(quiz);
+            await _unitOfWork.CompleteAsync();
+
+            return BuildQuizResponse(quiz);
         }
 
         private static QuizEntity BuildQuizEntity(CreateQuizDto createQuizDto)

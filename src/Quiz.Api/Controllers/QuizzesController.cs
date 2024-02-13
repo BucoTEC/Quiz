@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization.Infrastructure;
 using Microsoft.AspNetCore.Mvc;
 using Quiz.Bll.Dtos;
+using Quiz.Bll.Helpers;
 using Quiz.Bll.SearchQueries;
 using Quiz.Bll.Services.QuizService;
 
@@ -37,8 +39,14 @@ namespace Quiz.Api.Controllers
 
             return Ok(quizzes);
         }
-        // search quizzes with pagination and filtering
-        // update quiz look up options for include and excludes
+
+        [HttpPut("{id}")]
+        public async Task<ActionResult<QuizResponseDto>> UpdateQuiz([FromRoute] Guid id, [FromBody] UpdateQuizDto updateQuizDto)
+        {
+            var quiz = await _quizService.UpdateQuiz(id, updateQuizDto);
+            return Ok(quiz);
+        }
+
         // delete quiz keep in mind not to deleted question related to quiz
     }
 }

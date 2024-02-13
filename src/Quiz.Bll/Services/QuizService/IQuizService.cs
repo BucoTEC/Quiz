@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Quiz.Bll.Dtos;
+using Quiz.Bll.Helpers;
 using Quiz.Bll.SearchQueries;
 
 namespace Quiz.Bll.Services.QuizService
@@ -15,5 +16,6 @@ namespace Quiz.Bll.Services.QuizService
 
         Task<Pagination<QuizResponseDto>> SearchQuizzes(SearchQuizzesQuery searchQuizzesQuery);
 
+        Task<QuizResponseDto> UpdateQuiz(Guid id, UpdateQuizDto updateQuizDto);
     }
 }

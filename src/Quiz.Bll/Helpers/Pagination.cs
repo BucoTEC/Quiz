@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Quiz.Bll.Dtos
+namespace Quiz.Bll.Helpers
 {
     public class Pagination<T>(int pageIndex, int pageSize, int count, IEnumerable<T> data) where T : class
     {
