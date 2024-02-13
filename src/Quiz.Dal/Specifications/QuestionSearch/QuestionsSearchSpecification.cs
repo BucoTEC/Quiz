@@ -12,5 +12,10 @@ namespace Quiz.Dal.Specifications.QuestionSearch
         public QuestionsSearchSpecification(List<Guid> ids) : base(o => ids.Contains(o.Id))
         {
         }
+
+        public QuestionsSearchSpecification(List<string> questionTextNames)
+        : base(q => questionTextNames.Any(name => q.QuestionText.ToLower() == name.ToLower()))
+        {
+        }
     }
 }

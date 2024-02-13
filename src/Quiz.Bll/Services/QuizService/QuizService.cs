@@ -28,13 +28,23 @@ namespace Quiz.Bll.Services.QuizService
                 throw new Exception("Quiz with this name already exists");
             }
 
-            // TODO check names for duplicates throw exception if same are in list
-            //TODO check that questions coming in has unique question text name else throw exception
+            if (createQuizDto.Questions != null && createQuizDto.Questions.GroupBy(item => item.QuestionText).Any(group => group.Count() > 1))
+                throw new Exception("Duplicate QuestionText found in the list.");
 
-            // TODO check for duplicates if duplicates found throw exception
-            // TODO check if incoming req contains questionIds if yes get those questions and add them to the exist quiz list
+
+            var questionTexts = createQuizDto.Questions?.Select(q => q.QuestionText).ToList() ?? [];
+            var questionTextSpec = new QuestionsSearchSpecification(questionTexts);
+
+            var existingQuestionByName = await _unitOfWork.QuestionRepository.ListAsync(questionTextSpec);
+
+            if (existingQuestionByName.Any()) throw new Exception("Question already exits reuse the question by forwarding its id in the create quiz request");
 
             var newQuiz = BuildQuizEntity(createQuizDto);
+
+            var questionIdSpec = new QuestionsSearchSpecification(createQuizDto.QuestionsIds?.Distinct().ToList() ?? []);
+            var existingQuestionById = await _unitOfWork.QuestionRepository.ListAsync(questionIdSpec);
+
+            newQuiz.Questions = [.. newQuiz.Questions, .. existingQuestionById];
 
             _unitOfWork.QuizRepository.Add(newQuiz);
             await _unitOfWork.CompleteAsync();
@@ -124,3 +134,5 @@ namespace Quiz.Bll.Services.QuizService
         }
     }
 }
+
+//TODO add needed busses logic comments

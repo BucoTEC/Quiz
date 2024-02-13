@@ -33,5 +33,9 @@ namespace Quiz.Dal.Specifications.QuizSearch
                 }
             }
         }
+
+        public QuizzesSearchSpecification(List<Guid> ids) : base(o => ids.Contains(o.Id))
+        {
+        }
     }
 }
