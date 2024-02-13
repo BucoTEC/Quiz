@@ -47,6 +47,12 @@ namespace Quiz.Api.Controllers
             return Ok(quiz);
         }
 
-        // delete quiz keep in mind not to deleted question related to quiz
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteQuiz([FromRoute] Guid id)
+        {
+            await _quizService.DeleteQuiz(id);
+            return NoContent();
+        }
+
     }
 }

@@ -103,6 +103,14 @@ namespace Quiz.Bll.Services.QuizService
             return BuildQuizResponse(quiz);
         }
 
+        public async Task DeleteQuiz(Guid id)
+        {
+            var quiz = await _unitOfWork.QuizRepository.GetByIdAsync(id) ?? throw new Exception("No quiz with this id exists");
+
+            _unitOfWork.QuizRepository.Delete(quiz); // TODO check that id does not delete the questions
+            await _unitOfWork.CompleteAsync();
+        }
+
         private static QuizEntity BuildQuizEntity(CreateQuizDto createQuizDto)
         {
             var questions = createQuizDto.Questions?.Select(q => new QuestionEntity { QuestionText = q.QuestionText, QuestionAnswer = q.QuestionAnswer });
