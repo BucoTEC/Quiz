@@ -18,13 +18,15 @@ namespace Quiz.Api.Controllers
         [HttpPost]
         public async Task<ActionResult<QuizResponseDto>> CreateQuiz([FromBody] CreateQuizDto createQuizDto)
         {
-            return await _quizService.CreateQuiz(createQuizDto);
+            var quiz = await _quizService.CreateQuiz(createQuizDto);
+            return CreatedAtAction(nameof(GetQuizById), new { id = quiz.Id }, quiz);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<QuizResponseDto>> GetQuizById([FromRoute] Guid id, [FromQuery] bool includeQuestions = false)
         {
-            return await _quizService.GetQuizById(id, includeQuestions);
+            var quiz = await _quizService.GetQuizById(id, includeQuestions);
+            return Ok(quiz);
         }
     }
 }
