@@ -7,7 +7,7 @@ using Quiz.Dal.Entities;
 
 namespace Quiz.Dal.Data
 {
-    public class AppDbContext : DbContext
+    public class AppDbContext(DbContextOptions options) : DbContext(options)
     {
         public DbSet<QuizEntity> Quizzes { get; set; }
 
