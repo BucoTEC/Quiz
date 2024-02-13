@@ -9,7 +9,7 @@ namespace Quiz.Dal.Entities
     {
         public Guid Id { get; private set; } = new();
 
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; } = null;
 
         public DateTime CreatedAt { get; private set; } = DateTime.Now.ToUniversalTime();
 

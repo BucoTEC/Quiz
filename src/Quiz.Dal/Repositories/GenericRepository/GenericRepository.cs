@@ -50,6 +50,7 @@ namespace Quiz.Dal.Repositories.GenericRepo
 
         public virtual void Update(T entity)
         {
+            entity.UpdatedAt = DateTime.Now.ToUniversalTime();
             _context.Set<T>().Attach(entity);
             _context.Entry(entity).State = EntityState.Modified;
         }
