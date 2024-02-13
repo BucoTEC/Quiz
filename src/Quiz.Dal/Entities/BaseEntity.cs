@@ -5,13 +5,25 @@ using System.Threading.Tasks;
 
 namespace Quiz.Dal.Entities
 {
+    /// <summary>
+    /// Base class for all entities in the system.
+    /// </summary>
     public abstract class BaseEntity
     {
-        public Guid Id { get; set; } = new();
+        /// <summary>
+        /// Gets the unique identifier for the entity.
+        /// </summary>
+        public Guid Id { get; private set; } = Guid.NewGuid();
 
-        public DateTime UpdatedAt { get; set; }
+        /// <summary>
+        /// Gets or sets the date and time when the entity was last updated.
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; } = null;
 
-        public DateTime CreatedAt { get; set; }
+        /// <summary>
+        /// Gets the date and time when the entity was created.
+        /// </summary>
+        public DateTime CreatedAt { get; private set; } = DateTime.Now.ToUniversalTime();
 
     }
 }
