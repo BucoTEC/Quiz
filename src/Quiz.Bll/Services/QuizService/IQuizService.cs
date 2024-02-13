@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Quiz.Bll.Dtos;
+using Quiz.Bll.SearchQueries;
 
 namespace Quiz.Bll.Services.QuizService
 {
@@ -11,6 +12,8 @@ namespace Quiz.Bll.Services.QuizService
         Task<QuizResponseDto> CreateQuiz(CreateQuizDto createQuizDto);
 
         Task<QuizResponseDto> GetQuizById(Guid id, bool includeQuestions);
+
+        Task<Pagination<QuizResponseDto>> SearchQuizzes(SearchQuizzesQuery searchQuizzesQuery);
 
     }
 }
