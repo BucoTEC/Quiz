@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,9 +8,10 @@ using Quiz.Dal.Entities;
 
 namespace Quiz.Bll.Services.ExporterService
 {
+    [Export(typeof(IQuizExporter))]
     public class CsvQuizExporter : IQuizExporter
     {
-        public byte[] ExportQuizAsync(QuizEntity quiz)
+        public byte[] ExportQuiz(QuizEntity quiz)
         {
             // Generate CSV content
             var csvContent = GenerateCsvContent(quiz);

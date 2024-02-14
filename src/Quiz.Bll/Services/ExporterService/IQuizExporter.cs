@@ -8,6 +8,6 @@ namespace Quiz.Bll.Services.ExporterService
 {
     public interface IQuizExporter
     {
-        byte[] ExportQuizAsync(QuizEntity quiz);
+        byte[] ExportQuiz(QuizEntity quiz);
     }
 }

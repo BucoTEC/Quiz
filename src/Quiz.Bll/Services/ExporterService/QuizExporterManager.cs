@@ -32,7 +32,7 @@ namespace Quiz.Bll.Services.ExporterService
             }
 
             // Export the quiz
-            return exporter.ExportQuizAsync(quiz);
+            return exporter.ExportQuiz(quiz);
         }
 
         public string[] GetAvailableExporters()
