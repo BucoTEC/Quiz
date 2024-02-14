@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Quiz.Bll.Dtos;
+using Quiz.Bll.Exceptions;
 using Quiz.Bll.Helpers;
 using Quiz.Bll.SearchQueries;
 using Quiz.Dal.Dtos;
@@ -20,7 +21,7 @@ namespace Quiz.Bll.Services.QuestionService
         {
             var spec = new QuestionsSearchSpecification(createQuestionDto.QuestionText);
             var existingQuestion = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec);
-            if (existingQuestion is not null) throw new Exception("Same question already exists");
+            if (existingQuestion is not null) throw new BadRequestException($"Question with same text already exists, existing question id {existingQuestion.Id}");
 
             var newQuestion = BuildQuestionEntity(createQuestionDto);
             _unitOfWork.QuestionRepository.Add(newQuestion);
@@ -37,11 +38,11 @@ namespace Quiz.Bll.Services.QuestionService
             if (includeQuizzes)
             {
                 var spec = new QuestionWithQuizzesSpecification(id);
-                question = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec) ?? throw new Exception("No question with this id");
+                question = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec) ?? throw new NotFoundException($"No question found with id: {id}");
             }
             else
             {
-                question = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new Exception("No question with this id");
+                question = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
             }
 
             return BuildQuestionResponseDto(question);
@@ -64,7 +65,7 @@ namespace Quiz.Bll.Services.QuestionService
 
         public async Task<QuestionResponseDto> UpdateQuestion(Guid id, UpdateQuestionDto updateQuestionDto)
         {
-            var existingQuestion = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new Exception("No question with this id");
+            var existingQuestion = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
 
             existingQuestion.QuestionText = updateQuestionDto.QuestionText;
             existingQuestion.QuestionAnswer = updateQuestionDto.QuestionAnswer;

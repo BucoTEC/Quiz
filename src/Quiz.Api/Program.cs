@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Quiz.Bll.Services.QuestionService;
 using Quiz.Bll;
 using Quiz.Dal;
+using Quiz.Api.ExceptionHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,6 +16,11 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.ImplementBusinessLogicLayer();
 builder.Services.ImplementDataAccessLayer(builder.Configuration);
+
+builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
+builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 var app = builder.Build();
 
@@ -31,7 +37,8 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+app.UseExceptionHandler();
+
 app.Run();
 
-//TODO implement exception handling and remove use of raw Exception type in code
 //TODO add time stamp to responses

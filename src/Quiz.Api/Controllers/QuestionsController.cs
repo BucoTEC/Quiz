@@ -36,7 +36,7 @@ namespace Quiz.Api.Controllers
             return Ok(quizzes);
         }
 
-        [HttpPut("id")]
+        [HttpPut("{id}")]
         public async Task<QuestionResponseDto> CreateQuestion([FromRoute] Guid id, [FromBody] UpdateQuestionDto createQuestionDto)
         {
             return await _questionService.UpdateQuestion(id, createQuestionDto);
