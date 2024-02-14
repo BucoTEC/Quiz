@@ -44,7 +44,7 @@ namespace Quiz.Dal.Specifications.QuestionSearch
         }
 
         public QuestionsSearchSpecification(string questionTextName)
-        : base(x => x.QuestionText.ToLower() == questionTextName.ToLower())
+        : base(x => x.QuestionText.ToLower() == questionTextName.ToLower()) // TODO move to single execution
         {
         }
 

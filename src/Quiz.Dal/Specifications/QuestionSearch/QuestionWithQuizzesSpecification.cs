@@ -13,5 +13,9 @@ namespace Quiz.Dal.Specifications.QuestionSearch
         {
             AddInclude(q => q.Quizzes);
         }
+
+        public QuestionWithQuizzesSpecification(string questionText) : base(q => q.QuestionText == questionText)
+        {
+        }
     }
 }

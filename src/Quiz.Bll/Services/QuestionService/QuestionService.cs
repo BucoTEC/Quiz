@@ -62,7 +62,20 @@ namespace Quiz.Bll.Services.QuestionService
             return new Pagination<QuestionResponseDto>(searchQuestionsQuery.PageIndex, searchQuestionsQuery.PageSize, totalCountOfQuestions, data);
         }
 
-        private QuestionSearchParams BuildQuestionSearchParams(SearchQuestionsQuery searchQuestionsQuery)
+        public async Task<QuestionResponseDto> UpdateQuestion(Guid id, UpdateQuestionDto updateQuestionDto)
+        {
+            var spec = new QuestionWithQuizzesSpecification(id);
+            var existingQuestion = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec) ?? throw new Exception("No question with this id");
+
+            existingQuestion.QuestionText = updateQuestionDto.QuestionText;
+            existingQuestion.QuestionAnswer = updateQuestionDto.QuestionAnswer;
+            _unitOfWork.QuestionRepository.Update(existingQuestion);
+            await _unitOfWork.CompleteAsync();
+
+            return BuildQuestionResponseDto(existingQuestion);
+        }
+
+        private static QuestionSearchParams BuildQuestionSearchParams(SearchQuestionsQuery searchQuestionsQuery)
         {
             return new QuestionSearchParams
             {

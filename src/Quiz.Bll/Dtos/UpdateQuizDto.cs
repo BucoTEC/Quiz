@@ -12,6 +12,6 @@ namespace Quiz.Bll.Dtos
         [MinLength(5, ErrorMessage = "The Name must be at least 5 characters long.")]
         public string Name { get; set; } = null!;
 
-        public List<Guid>? QuestionsIds { get; set; }
+        public List<Guid> QuestionsIds { get; set; } = [];
     }
 }

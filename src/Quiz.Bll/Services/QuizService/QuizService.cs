@@ -90,7 +90,7 @@ namespace Quiz.Bll.Services.QuizService
         {
             var quizSpec = new QuizWithQuestionsSpecification(id);
             var quiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(quizSpec) ?? throw new Exception("No quiz with this id");
-
+            // TODO check if there is already a quiz with same name
             var questionSpec = new QuestionsSearchSpecification(updateQuizDto.QuestionsIds?.Distinct().ToList() ?? []);
             var questions = await _unitOfWork.QuestionRepository.ListAsync(questionSpec);
 

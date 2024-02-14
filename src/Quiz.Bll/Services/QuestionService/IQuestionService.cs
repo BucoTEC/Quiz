@@ -11,6 +11,7 @@ namespace Quiz.Bll.Services.QuestionService
     public interface IQuestionService
     {
         Task<QuestionResponseDto> CreateQuestion(CreateQuestionDto createQuestionDto);
+        Task<QuestionResponseDto> UpdateQuestion(Guid id, UpdateQuestionDto updateQuestionDto);
         Task<QuestionResponseDto> GetQuestionById(Guid id, bool includeQuizzes);
         Task<Pagination<QuestionResponseDto>> SearchQuestions(SearchQuestionsQuery searchQuestionsQuery);
     }

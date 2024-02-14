@@ -23,7 +23,7 @@ namespace Quiz.Api.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<QuestionResponseDto> CreateQuestion([FromRoute] Guid id, [FromQuery] bool includeQuizzes = false)
+        public async Task<QuestionResponseDto> GetQuestionById([FromRoute] Guid id, [FromQuery] bool includeQuizzes = false)
         {
             return await _questionService.GetQuestionById(id, includeQuizzes);
         }
@@ -34,6 +34,12 @@ namespace Quiz.Api.Controllers
             var quizzes = await _questionService.SearchQuestions(searchQuizzesQuery);
 
             return Ok(quizzes);
+        }
+
+        [HttpPut("id")]
+        public async Task<QuestionResponseDto> CreateQuestion([FromRoute] Guid id, [FromBody] UpdateQuestionDto createQuestionDto)
+        {
+            return await _questionService.UpdateQuestion(id, createQuestionDto);
         }
     }
 }
