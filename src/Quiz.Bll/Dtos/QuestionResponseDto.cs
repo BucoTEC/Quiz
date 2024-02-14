@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Quiz.Bll.Dtos
 {
-    public class QuestionResponseDto(Guid id, string questionText, string? questionsAnswer, List<QuizResponseDto>? quizzes = null)
+    public class QuestionResponseDto(Guid id, string questionText, string? questionsAnswer, DateTime createdAt, DateTime? updateAt, List<QuizResponseDto>? quizzes = null)
     {
         public Guid Id { get; set; } = id;
         public string QuestionText { get; set; } = questionText;
@@ -13,5 +13,10 @@ namespace Quiz.Bll.Dtos
         public string? QuestionAnswer { get; set; } = questionsAnswer;
 
         public List<QuizResponseDto>? Quizzes { get; set; } = quizzes;
+
+        public DateTime CreatedAt { get; private set; } = createdAt;
+
+        public DateTime? UpdatedAt { get; private set; } = updateAt;
+
     }
 }

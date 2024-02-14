@@ -123,7 +123,7 @@ namespace Quiz.Bll.Services.QuizService
 
         private static QuizResponseDto BuildQuizResponse(QuizEntity quizEntity)
         {
-            return new QuizResponseDto(quizEntity.Id, quizEntity.Name, quizEntity.Questions);
+            return new QuizResponseDto(quizEntity.Id, quizEntity.Name, quizEntity.CreatedAt, quizEntity.UpdatedAt, quizEntity.Questions);
         }
 
         private static QuizSearchParams BuildQuizSearchParams(SearchQuizzesQuery searchQuizzesQuery)

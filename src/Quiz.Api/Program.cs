@@ -40,5 +40,3 @@ app.MapControllers();
 app.UseExceptionHandler();
 
 app.Run();
-
-//TODO add time stamp to responses

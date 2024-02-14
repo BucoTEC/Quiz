@@ -106,8 +106,8 @@ namespace Quiz.Bll.Services.QuestionService
 
         private static QuestionResponseDto BuildQuestionResponseDto(QuestionEntity questionEntity)
         {
-            var QuizResponsesDto = questionEntity.Quizzes.Select(q => new QuizResponseDto(q.Id, q.Name, null)).ToList();
-            return new QuestionResponseDto(questionEntity.Id, questionEntity.QuestionText, questionEntity.QuestionAnswer, QuizResponsesDto);
+            var QuizResponsesDto = questionEntity.Quizzes.Select(q => new QuizResponseDto(q.Id, q.Name, q.CreatedAt, q.UpdatedAt, null)).ToList();
+            return new QuestionResponseDto(questionEntity.Id, questionEntity.QuestionText, questionEntity.QuestionAnswer, questionEntity.CreatedAt, questionEntity.UpdatedAt, QuizResponsesDto);
 
         }
     }
