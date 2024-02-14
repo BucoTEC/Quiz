@@ -21,14 +21,14 @@ namespace Quiz.Dal.Specifications.QuestionSearch
             {
                 switch (questionSearchParams.Sort)
                 {
-                    case "oldest": // TODO change to enum
+                    case "oldFirst":
                         AddOrderBy(p => p.CreatedAt);
                         break;
-                    case "newest":
+                    case "newFirst":
                         AddOrderByDescending(p => p.CreatedAt);
                         break;
                     default:
-                        AddOrderBy(n => n.QuestionText);
+                        AddOrderByDescending(p => p.CreatedAt);
                         break;
                 }
             }

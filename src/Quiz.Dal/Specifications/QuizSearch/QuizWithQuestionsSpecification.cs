@@ -14,6 +14,11 @@ namespace Quiz.Dal.Specifications.QuizSearch
             AddInclude(o => o.Questions);
         }
 
+        public QuizWithQuestionsSpecification(Guid id, bool includeQuestions) : base(o => o.Id == id)
+        {
+            if (includeQuestions) AddInclude(o => o.Questions);
+        }
+
         public QuizWithQuestionsSpecification(string name) : base(x => x.Name.ToLower() == name.ToLower())
         {
             AddInclude(o => o.Questions);

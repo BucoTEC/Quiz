@@ -19,54 +19,13 @@ namespace Quiz.Bll.Services.QuizService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
 
-        public async Task<QuizResponseDto> CreateQuiz(CreateQuizDto createQuizDto)
-        {
-            var spec = new QuizWithQuestionsSpecification(createQuizDto.Name);
-
-            var existingQuiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(spec);
-            if (existingQuiz != null) throw new BadRequestException($"Quiz with this name already exists, quiz id: {existingQuiz.Id}");
-
-            if (createQuizDto.Questions != null && createQuizDto.Questions.GroupBy(item => item.QuestionText).Any(group => group.Count() > 1))
-                throw new BadRequestException("Duplicate QuestionTexts found in the list of forwarded questions.");
-
-
-            var questionTexts = createQuizDto.Questions?.Select(q => q.QuestionText).ToList() ?? [];
-            var questionTextSpec = new QuestionsSearchSpecification(questionTexts);
-
-            var existingQuestionByName = await _unitOfWork.QuestionRepository.ListAsync(questionTextSpec);
-
-            if (existingQuestionByName.Any()) throw new BadRequestException("Question already exits reuse the question by forwarding its id in the create quiz request");
-
-            var newQuiz = BuildQuizEntity(createQuizDto);
-
-            var questionIdSpec = new QuestionsSearchSpecification(createQuizDto.QuestionsIds?.Distinct().ToList() ?? []);
-            var existingQuestionById = await _unitOfWork.QuestionRepository.ListAsync(questionIdSpec);
-
-            newQuiz.Questions = [.. newQuiz.Questions, .. existingQuestionById];
-
-            _unitOfWork.QuizRepository.Add(newQuiz);
-            await _unitOfWork.CompleteAsync();
-
-            return BuildQuizResponse(newQuiz);
-
-        }
-
+        /// <inheritdoc/>
         public async Task<QuizResponseDto> GetQuizById(Guid id, bool includeQuestions)
         {
-            QuizEntity quiz;
-
-            if (includeQuestions)
-            {
-                var spec = new QuizWithQuestionsSpecification(id);
-                quiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(spec) ?? throw new NotFoundException($"No quiz found with id:{id}");
-            }
-            else
-            {
-                quiz = await _unitOfWork.QuizRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No quiz found with id:{id}");
-            }
+            var spec = new QuizWithQuestionsSpecification(id, includeQuestions);
+            var quiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(spec) ?? throw new NotFoundException($"No quiz found with id:{id}");
 
             return BuildQuizResponse(quiz);
-
         }
 
         public async Task<Pagination<QuizResponseDto>> SearchQuizzes(SearchQuizzesQuery searchQuizzesQuery)
@@ -75,26 +34,70 @@ namespace Quiz.Bll.Services.QuizService
             var countSpec = new QuizzesCountSpecification(quizSearchParams);
             var spec = new QuizzesSearchSpecification(quizSearchParams);
 
+
             var totalCountOfQuizzes = await _unitOfWork.QuizRepository.CountAsync(countSpec);
             var quizzes = await _unitOfWork.QuizRepository.ListAsync(spec);
-
             var data = quizzes.Select(quiz => BuildQuizResponse(quiz));
 
             return new Pagination<QuizResponseDto>(quizSearchParams.PageIndex, quizSearchParams.PageSize, totalCountOfQuizzes, data);
         }
 
+        public async Task<QuizResponseDto> CreateQuiz(CreateQuizDto createQuizDto)
+        {
+            // check if there is already a quiz with the same name
+            var spec = new QuizWithQuestionsSpecification(createQuizDto.Name);
+            var existingQuiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(spec);
+            if (existingQuiz != null) throw new BadRequestException($"Quiz with this name already exists, quiz id: {existingQuiz.Id}");
+
+
+            // filter list of questions for duplicates
+            if (createQuizDto.Questions != null && createQuizDto.Questions.GroupBy(item => item.QuestionText).Any(group => group.Count() > 1))
+                throw new BadRequestException("Duplicate QuestionTexts found in the list of forwarded questions.");
+
+
+            // check that questions being created with quiz do not already exists
+            var questionTexts = createQuizDto.Questions?.Select(q => q.QuestionText).ToList() ?? [];
+            var questionTextSpec = new QuestionsSearchSpecification(questionTexts);
+            var existingQuestionByName = await _unitOfWork.QuestionRepository.ListAsync(questionTextSpec);
+            if (existingQuestionByName.Any()) throw new BadRequestException("Question already exits reuse the question by forwarding its id in the create quiz request");
+
+
+            // reuse existing questions by searching with forwarder questions ids
+            var questionIdsSpec = new QuestionsSearchSpecification(createQuizDto.QuestionsIds?.Distinct().ToList() ?? []);
+            var existingQuestionsById = await _unitOfWork.QuestionRepository.ListAsync(questionIdsSpec);
+
+
+            // create and save new quiz
+            var newQuiz = BuildQuizEntity(createQuizDto);
+            newQuiz.Questions = [.. newQuiz.Questions, .. existingQuestionsById];
+            _unitOfWork.QuizRepository.Add(newQuiz);
+            await _unitOfWork.CompleteAsync();
+
+            return BuildQuizResponse(newQuiz);
+
+        }
 
         public async Task<QuizResponseDto> UpdateQuiz(Guid id, UpdateQuizDto updateQuizDto)
         {
+            // check if quiz with this id exists
             var quizSpec = new QuizWithQuestionsSpecification(id);
             var quiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(quizSpec) ?? throw new NotFoundException($"No quiz found with id:{id}");
-            // TODO check if there is already a quiz with same name
+
+
+            // check if there is already a quiz with the same name
+            var spec = new QuizWithQuestionsSpecification(updateQuizDto.Name);
+            var existingQuiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(spec);
+            if (existingQuiz != null) throw new BadRequestException($"Quiz with this name already exists, quiz id: {existingQuiz.Id}");
+
+
+            // get questions of quiz that is being update
             var questionSpec = new QuestionsSearchSpecification(updateQuizDto.QuestionsIds?.Distinct().ToList() ?? []);
             var questions = await _unitOfWork.QuestionRepository.ListAsync(questionSpec);
 
+
+            // update quiz and save changes
             quiz.Name = updateQuizDto.Name;
             quiz.Questions = [.. questions];
-
             _unitOfWork.QuizRepository.Update(quiz);
             await _unitOfWork.CompleteAsync();
 
@@ -112,13 +115,12 @@ namespace Quiz.Bll.Services.QuizService
         private static QuizEntity BuildQuizEntity(CreateQuizDto createQuizDto)
         {
             var questions = createQuizDto.Questions?.Select(q => new QuestionEntity { QuestionText = q.QuestionText, QuestionAnswer = q.QuestionAnswer });
-            var quiz = new QuizEntity
+            return new QuizEntity
             {
                 Name = createQuizDto.Name,
                 Questions = questions?.ToList() ?? []
             };
 
-            return quiz;
         }
 
         private static QuizResponseDto BuildQuizResponse(QuizEntity quizEntity)
@@ -128,7 +130,6 @@ namespace Quiz.Bll.Services.QuizService
 
         private static QuizSearchParams BuildQuizSearchParams(SearchQuizzesQuery searchQuizzesQuery)
         {
-
             return new QuizSearchParams
             {
                 PageIndex = searchQuizzesQuery.PageIndex,
@@ -140,6 +141,3 @@ namespace Quiz.Bll.Services.QuizService
         }
     }
 }
-
-//TODO add needed busses logic comments
-// TODO maybe consider using auto mapper of for return objects
