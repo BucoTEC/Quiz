@@ -75,6 +75,14 @@ namespace Quiz.Bll.Services.QuestionService
             return BuildQuestionResponseDto(existingQuestion);
         }
 
+
+        public async Task DeleteQuestion(Guid id)
+        {
+            var question = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
+            _unitOfWork.QuestionRepository.Delete(question);
+            await _unitOfWork.CompleteAsync();
+        }
+
         private static QuestionSearchParams BuildQuestionSearchParams(SearchQuestionsQuery searchQuestionsQuery)
         {
             return new QuestionSearchParams

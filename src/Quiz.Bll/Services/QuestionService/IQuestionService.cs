@@ -14,5 +14,6 @@ namespace Quiz.Bll.Services.QuestionService
         Task<QuestionResponseDto> UpdateQuestion(Guid id, UpdateQuestionDto updateQuestionDto);
         Task<QuestionResponseDto> GetQuestionById(Guid id, bool includeQuizzes);
         Task<Pagination<QuestionResponseDto>> SearchQuestions(SearchQuestionsQuery searchQuestionsQuery);
+        Task DeleteQuestion(Guid id);
     }
 }

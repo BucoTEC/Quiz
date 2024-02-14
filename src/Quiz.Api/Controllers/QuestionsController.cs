@@ -41,5 +41,12 @@ namespace Quiz.Api.Controllers
         {
             return await _questionService.UpdateQuestion(id, createQuestionDto);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<ActionResult> DeleteQuestion([FromRoute] Guid id)
+        {
+            await _questionService.DeleteQuestion(id);
+            return NoContent();
+        }
     }
 }
