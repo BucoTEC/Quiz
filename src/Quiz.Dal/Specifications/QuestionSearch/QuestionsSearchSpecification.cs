@@ -17,5 +17,10 @@ namespace Quiz.Dal.Specifications.QuestionSearch
         : base(q => questionTextNames.Any(name => q.QuestionText.ToLower() == name.ToLower()))
         {
         }
+
+        public QuestionsSearchSpecification(string questionName)
+        : base(x => x.QuestionText.ToLower() == questionName.ToLower())
+        {
+        }
     }
 }

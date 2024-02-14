@@ -34,3 +34,4 @@ app.MapControllers();
 app.Run();
 
 //TODO implement exception handling and remove use of raw Exception type in code
+//TODO add time stamp to responses

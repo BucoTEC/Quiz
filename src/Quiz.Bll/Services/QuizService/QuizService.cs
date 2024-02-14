@@ -107,7 +107,7 @@ namespace Quiz.Bll.Services.QuizService
         {
             var quiz = await _unitOfWork.QuizRepository.GetByIdAsync(id) ?? throw new Exception("No quiz with this id exists");
 
-            _unitOfWork.QuizRepository.Delete(quiz); // TODO check that id does not delete the questions
+            _unitOfWork.QuizRepository.Delete(quiz);
             await _unitOfWork.CompleteAsync();
         }
 
@@ -144,3 +144,4 @@ namespace Quiz.Bll.Services.QuizService
 }
 
 //TODO add needed busses logic comments
+// TODO maybe consider using auto mapper of for return objects
