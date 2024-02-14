@@ -64,8 +64,7 @@ namespace Quiz.Bll.Services.QuestionService
 
         public async Task<QuestionResponseDto> UpdateQuestion(Guid id, UpdateQuestionDto updateQuestionDto)
         {
-            var spec = new QuestionWithQuizzesSpecification(id);
-            var existingQuestion = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec) ?? throw new Exception("No question with this id");
+            var existingQuestion = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new Exception("No question with this id");
 
             existingQuestion.QuestionText = updateQuestionDto.QuestionText;
             existingQuestion.QuestionAnswer = updateQuestionDto.QuestionAnswer;
