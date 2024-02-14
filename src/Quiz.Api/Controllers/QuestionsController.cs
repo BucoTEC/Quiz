@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Quiz.Bll.Dtos;
+using Quiz.Bll.Helpers;
+using Quiz.Bll.SearchQueries;
 using Quiz.Bll.Services.QuestionService;
 
 namespace Quiz.Api.Controllers
@@ -24,6 +26,14 @@ namespace Quiz.Api.Controllers
         public async Task<QuestionResponseDto> CreateQuestion([FromRoute] Guid id, [FromQuery] bool includeQuizzes = false)
         {
             return await _questionService.GetQuestionById(id, includeQuizzes);
+        }
+
+        [HttpGet]
+        public async Task<ActionResult<Pagination<QuestionResponseDto>>> SearchQuestions([FromQuery] SearchQuestionsQuery searchQuizzesQuery)
+        {
+            var quizzes = await _questionService.SearchQuestions(searchQuizzesQuery);
+
+            return Ok(quizzes);
         }
     }
 }

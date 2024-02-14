@@ -5,14 +5,15 @@ using System.Threading.Tasks;
 
 namespace Quiz.Bll.SearchQueries
 {
-    public class SearchQuizzesQuery : BaseSearchQuery
+    public class SearchQuestionsQuery : BaseSearchQuery
     {
         private string? _search;
-        public string SearchByQuizName
+        public string SearchByQuestionText
         {
             get => _search ?? "";
             set => _search = value.ToLower();
         }
-        public bool IncludeQuestions { get; set; } = false;
+        public bool IncludeQuizzes { get; set; } = false;
+
     }
 }

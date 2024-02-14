@@ -136,7 +136,7 @@ namespace Quiz.Bll.Services.QuizService
                 PageIndex = searchQuizzesQuery.PageIndex,
                 PageSize = searchQuizzesQuery.PageSize,
                 Sort = searchQuizzesQuery.Sort,
-                Search = searchQuizzesQuery.Search,
+                Search = searchQuizzesQuery.SearchByQuizName,
                 IncludeQuestions = searchQuizzesQuery.IncludeQuestions
             };
         }

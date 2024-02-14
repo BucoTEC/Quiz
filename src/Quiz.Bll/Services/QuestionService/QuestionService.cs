@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Quiz.Bll.Dtos;
+using Quiz.Bll.Helpers;
+using Quiz.Bll.SearchQueries;
+using Quiz.Dal.Dtos;
 using Quiz.Dal.Entities;
 using Quiz.Dal.Repositories.Uow;
 using Quiz.Dal.Specifications.QuestionSearch;
@@ -42,6 +45,33 @@ namespace Quiz.Bll.Services.QuestionService
             }
 
             return BuildQuestionResponseDto(question);
+        }
+
+        public async Task<Pagination<QuestionResponseDto>> SearchQuestions(SearchQuestionsQuery searchQuestionsQuery)
+        {
+            var questionSearchParams = BuildQuestionSearchParams(searchQuestionsQuery);
+
+            var countSpec = new QuestionsCountSpecification(questionSearchParams);
+            var spec = new QuestionsSearchSpecification(questionSearchParams);
+
+            var totalCountOfQuestions = await _unitOfWork.QuestionRepository.CountAsync(countSpec);
+            var question = await _unitOfWork.QuestionRepository.ListAsync(spec);
+
+            var data = question.Select(question => BuildQuestionResponseDto(question));
+
+            return new Pagination<QuestionResponseDto>(searchQuestionsQuery.PageIndex, searchQuestionsQuery.PageSize, totalCountOfQuestions, data);
+        }
+
+        private QuestionSearchParams BuildQuestionSearchParams(SearchQuestionsQuery searchQuestionsQuery)
+        {
+            return new QuestionSearchParams
+            {
+                PageIndex = searchQuestionsQuery.PageIndex,
+                PageSize = searchQuestionsQuery.PageSize,
+                Sort = searchQuestionsQuery.Sort,
+                Search = searchQuestionsQuery.SearchByQuestionText,
+                IncludeQuizzes = searchQuestionsQuery.IncludeQuizzes
+            };
         }
 
         private static QuestionEntity BuildQuestionEntity(CreateQuestionDto createQuestionDto)
