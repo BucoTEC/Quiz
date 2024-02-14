@@ -9,5 +9,6 @@ namespace Quiz.Bll.Services.QuestionService
     public interface IQuestionService
     {
         Task<QuestionResponseDto> CreateQuestion(CreateQuestionDto createQuestionDto);
+        Task<QuestionResponseDto> GetQuestionById(Guid id, bool includeQuizzes);
     }
 }

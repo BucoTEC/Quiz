@@ -19,5 +19,11 @@ namespace Quiz.Api.Controllers
         {
             return await _questionService.CreateQuestion(createQuestionDto);
         }
+
+        [HttpGet("{id}")]
+        public async Task<QuestionResponseDto> CreateQuestion([FromRoute] Guid id, [FromQuery] bool includeQuizzes = false)
+        {
+            return await _questionService.GetQuestionById(id, includeQuizzes);
+        }
     }
 }
