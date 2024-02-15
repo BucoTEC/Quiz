@@ -1,18 +1,27 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+namespace Quiz.Bll.Dtos;
 
-namespace Quiz.Bll.Dtos
+/// <summary>
+/// Data transfer object for exporting a quiz.
+/// </summary>
+public class ExportQuizResponseDto
 {
-    public class ExportQuizResponseDto
-    {
-        public string QuizName { get; set; } = string.Empty;
+    /// <summary>
+    /// Gets or sets the name of the quiz.
+    /// </summary>
+    public string QuizName { get; set; } = string.Empty;
 
-        public byte[] QuizData { get; set; } = null!;
+    /// <summary>
+    /// Gets or sets the data of the exported quiz.
+    /// </summary>
+    public byte[] QuizData { get; set; } = null!;
 
-        public string DataType { get; set; } = string.Empty;
+    /// <summary>
+    /// Gets or sets the type of data.
+    /// </summary>
+    public string DataType { get; set; } = string.Empty;
 
-        public string ResponseFormat { get; set; } = string.Empty;
-    }
+    /// <summary>
+    /// Gets or sets the format of the response.
+    /// </summary>
+    public string ResponseFormat { get; set; } = string.Empty;
 }
