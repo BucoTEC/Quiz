@@ -10,4 +10,3 @@ public class QuizSearchParams : BaseSearchParams
     /// </summary>
     public bool IncludeQuestions { get; set; } = false;
 }
-// TODO add base search params

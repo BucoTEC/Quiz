@@ -7,9 +7,9 @@ namespace Quiz.Dal.Specifications.QuestionSearch;
 /// </summary>
 public class QuestionWithQuizzesSpecification : BaseSpecification<QuestionEntity>
 {
-    public QuestionWithQuizzesSpecification(Guid id) : base(q => q.Id == id)
+    public QuestionWithQuizzesSpecification(Guid id, bool includeQuizzes) : base(q => q.Id == id)
     {
-        AddInclude(q => q.Quizzes);
+        if (includeQuizzes) AddInclude(q => q.Quizzes);
     }
 
     public QuestionWithQuizzesSpecification(string questionText) : base(q => q.QuestionText == questionText)

@@ -40,11 +40,4 @@ public class QuestionsSearchSpecification : BaseSpecification<QuestionEntity>
     : base(q => questionTextNames.Any(name => q.QuestionText.ToLower() == name.ToLower()))
     {
     }
-
-    public QuestionsSearchSpecification(string questionTextName)
-    : base(x => x.QuestionText.ToLower() == questionTextName.ToLower()) // TODO move to single execution
-    {
-    }
-
-
 }

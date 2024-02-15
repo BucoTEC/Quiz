@@ -140,6 +140,11 @@ namespace Quiz.Bll.Services.QuizService
             return _quizExporter.GetAvailableExporters();
         }
 
+        /// <summary>
+        /// Builds a <see cref="QuizEntity"/> from a <see cref="CreateQuizDto"/>.
+        /// </summary>
+        /// <param name="createQuizDto">The create quiz DTO containing the data for building the quiz entity.</param>
+        /// <returns>The constructed quiz entity.</returns>
         private static QuizEntity BuildQuizEntity(CreateQuizDto createQuizDto)
         {
             var questions = createQuizDto.Questions?.Select(q => new QuestionEntity { QuestionText = q.QuestionText, QuestionAnswer = q.QuestionAnswer });
@@ -151,11 +156,21 @@ namespace Quiz.Bll.Services.QuizService
 
         }
 
+        /// <summary>
+        /// Builds a <see cref="QuizResponseDto"/> from a <see cref="QuizEntity"/>.
+        /// </summary>
+        /// <param name="quizEntity">The quiz entity containing the data for building the quiz response DTO.</param>
+        /// <returns>The constructed quiz response DTO.</returns>
         private static QuizResponseDto BuildQuizResponse(QuizEntity quizEntity)
         {
             return new QuizResponseDto(quizEntity.Id, quizEntity.Name, quizEntity.CreatedAt, quizEntity.UpdatedAt, quizEntity.Questions);
         }
 
+        /// <summary>
+        /// Builds a <see cref="QuizSearchParams"/> from a <see cref="SearchQuizzesQuery"/>.
+        /// </summary>
+        /// <param name="searchQuizzesQuery">The search quizzes query containing the parameters for building the search parameters.</param>
+        /// <returns>The constructed quiz search parameters.</returns>
         private static QuizSearchParams BuildQuizSearchParams(SearchQuizzesQuery searchQuizzesQuery)
         {
             return new QuizSearchParams
