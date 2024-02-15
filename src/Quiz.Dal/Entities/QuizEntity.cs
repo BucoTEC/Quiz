@@ -1,28 +1,23 @@
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 
-namespace Quiz.Dal.Entities
+namespace Quiz.Dal.Entities;
+
+/// <summary>
+/// Represents a quiz entity.
+/// </summary>
+[Index(nameof(Name), IsUnique = true)]
+public class QuizEntity : BaseEntity
 {
     /// <summary>
-    /// Represents a quiz entity.
+    /// Gets or sets the name of the quiz.
     /// </summary>
-    [Index(nameof(Name), IsUnique = true)]
-    public class QuizEntity : BaseEntity
-    {
-        /// <summary>
-        /// Gets or sets the name of the quiz.
-        /// </summary>
-        [Required(ErrorMessage = "Quiz name is required.")]
-        [StringLength(100, MinimumLength = 3, ErrorMessage = "Quiz name must be between 3 and 50 characters.")]
-        public string Name { get; set; } = string.Empty;
+    [Required(ErrorMessage = "Quiz name is required.")]
+    [StringLength(100, MinimumLength = 3, ErrorMessage = "Quiz name must be between 3 and 50 characters.")]
+    public string Name { get; set; } = string.Empty;
 
-        /// <summary>
-        /// Gets or sets the list of questions related to this quiz.
-        /// </summary>
-        public List<QuestionEntity> Questions { get; set; } = [];
-    }
+    /// <summary>
+    /// Gets or sets the list of questions related to this quiz.
+    /// </summary>
+    public List<QuestionEntity> Questions { get; set; } = [];
 }
