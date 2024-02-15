@@ -3,7 +3,7 @@ namespace Quiz.Bll.SearchQueries;
 /// <summary>
 /// Represents the base search query parameters.
 /// </summary>
-public class BaseSearchQuery
+public abstract class BaseSearchQuery
 {
     private const int MaxPageSize = 50;
 

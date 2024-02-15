@@ -31,6 +31,7 @@ namespace Quiz.Bll.Services.QuizService
             return BuildQuizResponse(quiz);
         }
 
+        /// <inheritdoc/>
         public async Task<Pagination<QuizResponseDto>> SearchQuizzes(SearchQuizzesQuery searchQuizzesQuery)
         {
             var quizSearchParams = BuildQuizSearchParams(searchQuizzesQuery);
@@ -45,6 +46,7 @@ namespace Quiz.Bll.Services.QuizService
             return new Pagination<QuizResponseDto>(quizSearchParams.PageIndex, quizSearchParams.PageSize, totalCountOfQuizzes, data);
         }
 
+        /// <inheritdoc/>
         public async Task<QuizResponseDto> CreateQuiz(CreateQuizDto createQuizDto)
         {
             // check if there is already a quiz with the same name
@@ -80,6 +82,7 @@ namespace Quiz.Bll.Services.QuizService
 
         }
 
+        /// <inheritdoc/>
         public async Task<QuizResponseDto> UpdateQuiz(Guid id, UpdateQuizDto updateQuizDto)
         {
             // check if quiz with this id exists
@@ -107,6 +110,7 @@ namespace Quiz.Bll.Services.QuizService
             return BuildQuizResponse(quiz);
         }
 
+        /// <inheritdoc/>
         public async Task DeleteQuiz(Guid id)
         {
             var quiz = await _unitOfWork.QuizRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No quiz found with id:{id}");
@@ -115,7 +119,7 @@ namespace Quiz.Bll.Services.QuizService
             await _unitOfWork.CompleteAsync();
         }
 
-
+        /// <inheritdoc/>
         public async Task<ExportQuizResponseDto> ExportQuiz(string exporter, Guid id)
         {
             // verify that quiz with this id exists
@@ -130,7 +134,7 @@ namespace Quiz.Bll.Services.QuizService
             return new ExportQuizResponseDto { QuizName = quiz.Name, QuizData = exportedQuiz.Data, DataType = exportedQuiz.DataType, ResponseFormat = exportedQuiz.ResponseFormat };
         }
 
-
+        /// <inheritdoc/>
         public string[] GetAvailableExporters()
         {
             return _quizExporter.GetAvailableExporters();
