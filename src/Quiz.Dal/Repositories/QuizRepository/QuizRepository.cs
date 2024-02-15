@@ -8,6 +8,8 @@ using Quiz.Dal.Repositories.GenericRepo;
 
 namespace Quiz.Dal.Repositories.QuizRepo
 {
+
+    /// <inheritdoc/>
     public class QuizRepository(AppDbContext context) : GenericRepository<QuizEntity>(context), IQuizRepository
     {
     }

@@ -1,38 +1,38 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Quiz.Dal.Data;
-using Quiz.Dal.Repositories.QuestionRepo;
 using Quiz.Dal.Repositories.QuizRepo;
+using Quiz.Dal.Repositories.QuestionRepo;
 
-namespace Quiz.Dal.Repositories.Uow
+namespace Quiz.Dal.Repositories.Uow;
+
+/// <inheritdoc/>
+public class UnitOfWork : IUnitOfWork
 {
-    public class UnitOfWork : IUnitOfWork
+    private readonly AppDbContext _context;
+
+    /// <inheritdoc/>
+    public IQuizRepository QuizRepository { get; private set; }
+
+    /// <inheritdoc/>
+    public IQuestionRepository QuestionRepository { get; private set; }
+
+    public UnitOfWork(AppDbContext context)
     {
-        private readonly AppDbContext _context;
+        _context = context;
 
-        public IQuizRepository QuizRepository { get; private set; }
+        QuizRepository = new QuizRepository(context);
+        QuestionRepository = new QuestionRepository(context);
 
-        public IQuestionRepository QuestionRepository { get; private set; }
+    }
 
-        public UnitOfWork(AppDbContext context)
-        {
-            _context = context;
+    /// <inheritdoc/>
+    public async Task CompleteAsync()
+    {
+        await _context.SaveChangesAsync();
+    }
 
-            QuizRepository = new QuizRepository(context);
-            QuestionRepository = new QuestionRepository(context);
-
-        }
-
-        public async Task CompleteAsync()
-        {
-            await _context.SaveChangesAsync();
-        }
-
-        public void Dispose()
-        {
-            _context.Dispose();
-        }
+    /// <inheritdoc/>
+    public void Dispose()
+    {
+        _context.Dispose();
     }
 }

@@ -1,20 +1,31 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Quiz.Dal.Repositories.QuestionRepo;
 using Quiz.Dal.Repositories.QuizRepo;
+using Quiz.Dal.Repositories.QuestionRepo;
 
-namespace Quiz.Dal.Repositories.Uow
+namespace Quiz.Dal.Repositories.Uow;
+
+/// <summary>
+/// Represents a unit of work interface for managing repositories.
+/// </summary>
+public interface IUnitOfWork
 {
-    public interface IUnitOfWork
-    {
-        IQuizRepository QuizRepository { get; }
+    /// <summary>
+    /// Gets the repository for managing quizzes.
+    /// </summary>
+    IQuizRepository QuizRepository { get; }
 
-        IQuestionRepository QuestionRepository { get; }
+    /// <summary>
+    /// Gets the repository for managing questions.
+    /// </summary>
+    IQuestionRepository QuestionRepository { get; }
 
-        Task CompleteAsync();
+    /// <summary>
+    /// Completes the unit of work asynchronously.
+    /// </summary>
+    /// <returns>A task representing the asynchronous operation.</returns>
+    Task CompleteAsync();
 
-        void Dispose();
-    }
+    /// <summary>
+    /// Disposes the resources associated with the unit of work.
+    /// </summary>
+    void Dispose();
 }
