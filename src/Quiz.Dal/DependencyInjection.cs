@@ -1,12 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Quiz.Dal.Data;
+using Quiz.Dal.Repositories.Uow;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Quiz.Dal.Data;
-using Quiz.Dal.Repositories.Uow;
 
 namespace Quiz.Dal
 {
