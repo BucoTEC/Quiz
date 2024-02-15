@@ -27,5 +27,9 @@ namespace Quiz.Bll.Services.QuizService
 
         Task DeleteQuiz(Guid id);
 
+        Task<ExportQuizResponseDto> ExportQuiz(string exporter, Guid id);
+
+        string[] GetAvailableExporters();
+
     }
 }

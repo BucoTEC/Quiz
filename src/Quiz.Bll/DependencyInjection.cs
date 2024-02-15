@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
+using Quiz.Bll.Services.ExporterService;
 using Quiz.Bll.Services.QuestionService;
 using Quiz.Bll.Services.QuizService;
 
@@ -15,6 +16,7 @@ namespace Quiz.Bll
 
             services.AddScoped<IQuizService, QuizService>();
             services.AddScoped<IQuestionService, QuestionService>();
+            services.AddSingleton<QuizExporterManager>();
 
             return services;
         }
