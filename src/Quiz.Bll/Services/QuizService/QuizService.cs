@@ -7,7 +7,7 @@ using Quiz.Bll.Dtos;
 using Quiz.Bll.Exceptions;
 using Quiz.Bll.Helpers;
 using Quiz.Bll.SearchQueries;
-using Quiz.Bll.Services.ExporterService;
+using Quiz.Bll.Services.QuizExporterService;
 using Quiz.Dal.Dtos;
 using Quiz.Dal.Entities;
 using Quiz.Dal.Repositories.Uow;

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
-using Quiz.Bll.Services.ExporterService;
+using Quiz.Bll.Services.QuizExporterService;
 using Quiz.Bll.Services.QuestionService;
 using Quiz.Bll.Services.QuizService;
 
