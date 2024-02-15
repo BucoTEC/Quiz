@@ -4,21 +4,33 @@ using System.ComponentModel.Composition;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Quiz.Dal.Dtos;
 using Quiz.Dal.Entities;
 
 namespace Quiz.Bll.Services.ExporterService
 {
     [Export(typeof(IQuizExporter))]
+    [ExportMetadata("Name", "CsvQuizExporter")]
     public class CsvQuizExporter : IQuizExporter
     {
-        public byte[] ExportQuiz(QuizEntity quiz)
+        private const string dataType = "csv";
+        private const string responseFormat = "text/csv";
+
+        public ExportQuizData ExportQuiz(QuizEntity quiz)
         {
             // Generate CSV content
             var csvContent = GenerateCsvContent(quiz);
-            return Encoding.UTF8.GetBytes(csvContent);
+
+            return new ExportQuizData
+            {
+                Data = Encoding.UTF8.GetBytes(csvContent),
+                DataType = dataType,
+                ResponseFormat = responseFormat
+
+            };
         }
 
-        private string GenerateCsvContent(QuizEntity quiz)
+        private static string GenerateCsvContent(QuizEntity quiz)
         {
 
             // Generate CSV content based on the quiz data

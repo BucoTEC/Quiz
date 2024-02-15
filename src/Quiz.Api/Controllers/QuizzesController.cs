@@ -133,5 +133,38 @@ namespace Quiz.Api.Controllers
             await _quizService.DeleteQuiz(id);
             return NoContent();
         }
+
+        /// <summary>
+        /// Exports a quiz to CSV format using the specified exporter.
+        /// </summary>
+        /// <param name="quizId">The unique identifier of the quiz to export.</param>
+        /// <param name="exporter">The name of the exporter to use.</param>
+        /// <returns>A CSV file containing the quiz questions.</returns>
+        /// <response code="200">Returns the CSV file with the quiz questions.</response>
+        /// <response code="400">If the exporter name is invalid or the quiz does not exist.</response>
+        [HttpGet("{quizId}/export/{exporter}")]
+        [ProducesResponseType(typeof(FileContentResult), 200)]
+        [ProducesResponseType(typeof(void), 400)]
+        public async Task<IActionResult> ExportQuiz(Guid quizId, string exporter)
+        {
+            var exportQuizResponseDto = await _quizService.ExportQuiz(exporter, quizId);
+            return File(exportQuizResponseDto.QuizData, exportQuizResponseDto.ResponseFormat, $"quiz_{exportQuizResponseDto.QuizName}.{exportQuizResponseDto.DataType}");
+        }
+
+        /// <summary>
+        /// Retrieves the available exporters for exporting quizzes.
+        /// </summary>
+        /// <returns>An array of strings representing the available exporter names.</returns>
+        /// <response code="200">Returns the list of available exporter names.</response>
+        [HttpGet("exporters")]
+        [ProducesResponseType(typeof(string[]), 200)]
+        public IActionResult GetAvailableExporters()
+        {
+            // Get available exporters
+            var exporterNames = _quizService.GetAvailableExporters();
+
+            // Return the list of exporter names
+            return Ok(exporterNames);
+        }
     }
 }

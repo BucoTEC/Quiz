@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using Quiz.Bll.Dtos;
 using Quiz.Bll.Exceptions;
 using Quiz.Bll.Helpers;
 using Quiz.Bll.SearchQueries;
+using Quiz.Bll.Services.ExporterService;
 using Quiz.Dal.Dtos;
 using Quiz.Dal.Entities;
 using Quiz.Dal.Repositories.Uow;
@@ -15,9 +17,10 @@ using Quiz.Dal.Specifications.QuizSearch;
 
 namespace Quiz.Bll.Services.QuizService
 {
-    public class QuizService(IUnitOfWork unitOfWork) : IQuizService
+    public class QuizService(IUnitOfWork unitOfWork, QuizExporterManager quizExporter) : IQuizService
     {
         private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        private readonly QuizExporterManager _quizExporter = quizExporter;
 
         /// <inheritdoc/>
         public async Task<QuizResponseDto> GetQuizById(Guid id, bool includeQuestions)
@@ -110,6 +113,28 @@ namespace Quiz.Bll.Services.QuizService
 
             _unitOfWork.QuizRepository.Delete(quiz);
             await _unitOfWork.CompleteAsync();
+        }
+
+
+        public async Task<ExportQuizResponseDto> ExportQuiz(string exporter, Guid id)
+        {
+            var quizSpec = new QuizWithQuestionsSpecification(id);
+            var quiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(quizSpec) ?? throw new NotFoundException($"No quiz found with id:{id}");
+            var csvContent = _quizExporter.ExportQuizAsync(exporter, quiz); // Use injected QuizExporter service
+
+            var data = new MemoryStream(csvContent.Data);
+            return new ExportQuizResponseDto { QuizName = quiz.Name, QuizData = data, DataType = csvContent.DataType, ResponseFormat = csvContent.ResponseFormat };
+        }
+
+
+        public string[] GetAvailableExporters()
+        {
+            // var lazyExporters = 
+            return _quizExporter.GetAvailableExporters();
+
+            // Get exporter names from Lazy<T> instances
+            // return lazyExporters.Select(exporter => exporter.GetType().Name).ToArray();
+
         }
 
         private static QuizEntity BuildQuizEntity(CreateQuizDto createQuizDto)
