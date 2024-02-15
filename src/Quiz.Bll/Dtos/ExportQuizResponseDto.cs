@@ -9,7 +9,7 @@ namespace Quiz.Bll.Dtos
     {
         public string QuizName { get; set; } = string.Empty;
 
-        public MemoryStream QuizData { get; set; } = null!;
+        public byte[] QuizData { get; set; } = null!;
 
         public string DataType { get; set; } = string.Empty;
 

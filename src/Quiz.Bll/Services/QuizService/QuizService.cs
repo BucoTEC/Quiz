@@ -118,23 +118,22 @@ namespace Quiz.Bll.Services.QuizService
 
         public async Task<ExportQuizResponseDto> ExportQuiz(string exporter, Guid id)
         {
+            // verify that quiz with this id exists
             var quizSpec = new QuizWithQuestionsSpecification(id);
             var quiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(quizSpec) ?? throw new NotFoundException($"No quiz found with id:{id}");
-            var csvContent = _quizExporter.ExportQuizAsync(exporter, quiz); // Use injected QuizExporter service
 
-            var data = new MemoryStream(csvContent.Data);
-            return new ExportQuizResponseDto { QuizName = quiz.Name, QuizData = data, DataType = csvContent.DataType, ResponseFormat = csvContent.ResponseFormat };
+            // verify that exporter with this name exists
+            var availableExporters = _quizExporter.GetAvailableExporters();
+            if (!availableExporters.Contains(exporter)) throw new BadRequestException();
+
+            var exportedQuiz = _quizExporter.ExportQuizAsync(exporter, quiz);
+            return new ExportQuizResponseDto { QuizName = quiz.Name, QuizData = exportedQuiz.Data, DataType = exportedQuiz.DataType, ResponseFormat = exportedQuiz.ResponseFormat };
         }
 
 
         public string[] GetAvailableExporters()
         {
-            // var lazyExporters = 
             return _quizExporter.GetAvailableExporters();
-
-            // Get exporter names from Lazy<T> instances
-            // return lazyExporters.Select(exporter => exporter.GetType().Name).ToArray();
-
         }
 
         private static QuizEntity BuildQuizEntity(CreateQuizDto createQuizDto)
