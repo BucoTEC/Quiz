@@ -11,7 +11,6 @@ using Quiz.Bll.Services.QuizExporterService;
 using Quiz.Dal.Dtos;
 using Quiz.Dal.Entities;
 using Quiz.Dal.Repositories.Uow;
-using Quiz.Dal.Specifications;
 using Quiz.Dal.Specifications.QuestionSearch;
 using Quiz.Dal.Specifications.QuizSearch;
 
