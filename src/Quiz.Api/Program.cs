@@ -1,10 +1,8 @@
-using Microsoft.EntityFrameworkCore;
-using Quiz.Bll.Services.QuestionService;
 using Quiz.Bll;
 using Quiz.Dal;
-using Quiz.Api.ExceptionHandlers;
-using Microsoft.OpenApi.Models;
 using System.Reflection;
+using Microsoft.OpenApi.Models;
+using Quiz.Api.ExceptionHandlers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,30 +16,19 @@ builder.Services.AddSwaggerGen(options =>
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
-        Title = "ToDo API",
-        Description = "An ASP.NET Core Web API for managing ToDo items",
-        TermsOfService = new Uri("https://example.com/terms"),
-        Contact = new OpenApiContact
-        {
-            Name = "Example Contact",
-            Url = new Uri("https://example.com/contact")
-        },
-        License = new OpenApiLicense
-        {
-            Name = "Example License",
-            Url = new Uri("https://example.com/license")
-        }
+        Title = "Quiz API",
+        Description = "An ASP.NET Core Web API for managing Quizzes",
     });
 
-    // using System.Reflection;
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
 });
 
-
+// BLL and DAL dependant injection handlers
 builder.Services.ImplementBusinessLogicLayer();
 builder.Services.ImplementDataAccessLayer(builder.Configuration);
 
+// Exception handling configuration
 builder.Services.AddExceptionHandler<BadRequestExceptionHandler>();
 builder.Services.AddExceptionHandler<NotFoundExceptionHandler>();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
