@@ -1,114 +1,115 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Quiz.Bll.Dtos;
-using Quiz.Bll.Exceptions;
-using Quiz.Bll.Helpers;
-using Quiz.Bll.SearchQueries;
 using Quiz.Dal.Dtos;
+using Quiz.Bll.Helpers;
 using Quiz.Dal.Entities;
+using Quiz.Bll.Exceptions;
+using Quiz.Bll.SearchQueries;
 using Quiz.Dal.Repositories.Uow;
 using Quiz.Dal.Specifications.QuestionSearch;
 
-namespace Quiz.Bll.Services.QuestionService
+namespace Quiz.Bll.Services.QuestionService;
+
+/// <inheritdoc/>
+public class QuestionService(IUnitOfWork unitOfWork) : IQuestionService
 {
-    public class QuestionService(IUnitOfWork unitOfWork) : IQuestionService
+    private readonly IUnitOfWork _unitOfWork = unitOfWork;
+
+    /// <inheritdoc/>
+    public async Task<QuestionResponseDto> GetQuestionById(Guid id, bool includeQuizzes)
     {
-        private readonly IUnitOfWork _unitOfWork = unitOfWork;
+        QuestionEntity question;
 
-        public async Task<QuestionResponseDto> CreateQuestion(CreateQuestionDto createQuestionDto)
+        if (includeQuizzes) // TODO update to use specification
         {
-            var spec = new QuestionsSearchSpecification(createQuestionDto.QuestionText);
-            var existingQuestion = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec);
-            if (existingQuestion is not null) throw new BadRequestException($"Question with same text already exists, existing question id {existingQuestion.Id}");
-
-            var newQuestion = BuildQuestionEntity(createQuestionDto);
-            _unitOfWork.QuestionRepository.Add(newQuestion);
-            await _unitOfWork.CompleteAsync();
-
-            return BuildQuestionResponseDto(newQuestion);
+            var spec = new QuestionWithQuizzesSpecification(id);
+            question = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec) ?? throw new NotFoundException($"No question found with id: {id}");
+        }
+        else
+        {
+            question = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
         }
 
+        return BuildQuestionResponseDto(question);
+    }
 
-        public async Task<QuestionResponseDto> GetQuestionById(Guid id, bool includeQuizzes)
+
+    /// <inheritdoc/>
+    public async Task<Pagination<QuestionResponseDto>> SearchQuestions(SearchQuestionsQuery searchQuestionsQuery)
+    {
+        var questionSearchParams = BuildQuestionSearchParams(searchQuestionsQuery);
+
+        var countSpec = new QuestionsCountSpecification(questionSearchParams);
+        var spec = new QuestionsSearchSpecification(questionSearchParams);
+
+        var totalCountOfQuestions = await _unitOfWork.QuestionRepository.CountAsync(countSpec);
+        var question = await _unitOfWork.QuestionRepository.ListAsync(spec);
+
+        var data = question.Select(BuildQuestionResponseDto);
+
+        return new Pagination<QuestionResponseDto>(searchQuestionsQuery.PageIndex, searchQuestionsQuery.PageSize, totalCountOfQuestions, data);
+    }
+
+    /// <inheritdoc/>
+    public async Task<QuestionResponseDto> CreateQuestion(CreateQuestionDto createQuestionDto)
+    {
+        var spec = new QuestionsSearchSpecification(createQuestionDto.QuestionText);
+        var existingQuestion = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec);
+        if (existingQuestion is not null) throw new BadRequestException($"Question with same text already exists, existing question id {existingQuestion.Id}");
+
+        var newQuestion = BuildQuestionEntity(createQuestionDto);
+        _unitOfWork.QuestionRepository.Add(newQuestion);
+        await _unitOfWork.CompleteAsync();
+
+        return BuildQuestionResponseDto(newQuestion);
+    }
+
+    /// <inheritdoc/>
+    public async Task<QuestionResponseDto> UpdateQuestion(Guid id, UpdateQuestionDto updateQuestionDto)
+    {
+        var existingQuestion = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
+
+        existingQuestion.QuestionText = updateQuestionDto.QuestionText;
+        existingQuestion.QuestionAnswer = updateQuestionDto.QuestionAnswer;
+        _unitOfWork.QuestionRepository.Update(existingQuestion);
+        await _unitOfWork.CompleteAsync();
+
+        return BuildQuestionResponseDto(existingQuestion);
+    }
+
+    /// <inheritdoc/>
+    public async Task DeleteQuestion(Guid id)
+    {
+        var question = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
+        _unitOfWork.QuestionRepository.Delete(question);
+        await _unitOfWork.CompleteAsync();
+    }
+
+    private static QuestionSearchParams BuildQuestionSearchParams(SearchQuestionsQuery searchQuestionsQuery)
+    {
+        return new QuestionSearchParams
         {
-            QuestionEntity question;
+            PageIndex = searchQuestionsQuery.PageIndex,
+            PageSize = searchQuestionsQuery.PageSize,
+            Sort = searchQuestionsQuery.Sort,
+            Search = searchQuestionsQuery.SearchByQuestionText,
+            IncludeQuizzes = searchQuestionsQuery.IncludeQuizzes
+        };
+    }
 
-            if (includeQuizzes)
-            {
-                var spec = new QuestionWithQuizzesSpecification(id);
-                question = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec) ?? throw new NotFoundException($"No question found with id: {id}");
-            }
-            else
-            {
-                question = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
-            }
-
-            return BuildQuestionResponseDto(question);
-        }
-
-        public async Task<Pagination<QuestionResponseDto>> SearchQuestions(SearchQuestionsQuery searchQuestionsQuery)
+    private static QuestionEntity BuildQuestionEntity(CreateQuestionDto createQuestionDto)
+    {
+        return new QuestionEntity
         {
-            var questionSearchParams = BuildQuestionSearchParams(searchQuestionsQuery);
+            QuestionText = createQuestionDto.QuestionText,
+            QuestionAnswer = createQuestionDto.QuestionAnswer
+        };
+    }
 
-            var countSpec = new QuestionsCountSpecification(questionSearchParams);
-            var spec = new QuestionsSearchSpecification(questionSearchParams);
+    private static QuestionResponseDto BuildQuestionResponseDto(QuestionEntity questionEntity)
+    {
+        var QuizResponsesDto = questionEntity.Quizzes.Select(q => new QuizResponseDto(q.Id, q.Name, q.CreatedAt, q.UpdatedAt, null)).ToList();
+        return new QuestionResponseDto(questionEntity.Id, questionEntity.QuestionText, questionEntity.QuestionAnswer, questionEntity.CreatedAt, questionEntity.UpdatedAt, QuizResponsesDto);
 
-            var totalCountOfQuestions = await _unitOfWork.QuestionRepository.CountAsync(countSpec);
-            var question = await _unitOfWork.QuestionRepository.ListAsync(spec);
-
-            var data = question.Select(question => BuildQuestionResponseDto(question));
-
-            return new Pagination<QuestionResponseDto>(searchQuestionsQuery.PageIndex, searchQuestionsQuery.PageSize, totalCountOfQuestions, data);
-        }
-
-        public async Task<QuestionResponseDto> UpdateQuestion(Guid id, UpdateQuestionDto updateQuestionDto)
-        {
-            var existingQuestion = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
-
-            existingQuestion.QuestionText = updateQuestionDto.QuestionText;
-            existingQuestion.QuestionAnswer = updateQuestionDto.QuestionAnswer;
-            _unitOfWork.QuestionRepository.Update(existingQuestion);
-            await _unitOfWork.CompleteAsync();
-
-            return BuildQuestionResponseDto(existingQuestion);
-        }
-
-
-        public async Task DeleteQuestion(Guid id)
-        {
-            var question = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
-            _unitOfWork.QuestionRepository.Delete(question);
-            await _unitOfWork.CompleteAsync();
-        }
-
-        private static QuestionSearchParams BuildQuestionSearchParams(SearchQuestionsQuery searchQuestionsQuery)
-        {
-            return new QuestionSearchParams
-            {
-                PageIndex = searchQuestionsQuery.PageIndex,
-                PageSize = searchQuestionsQuery.PageSize,
-                Sort = searchQuestionsQuery.Sort,
-                Search = searchQuestionsQuery.SearchByQuestionText,
-                IncludeQuizzes = searchQuestionsQuery.IncludeQuizzes
-            };
-        }
-
-        private static QuestionEntity BuildQuestionEntity(CreateQuestionDto createQuestionDto)
-        {
-            return new QuestionEntity
-            {
-                QuestionText = createQuestionDto.QuestionText,
-                QuestionAnswer = createQuestionDto.QuestionAnswer
-            };
-        }
-
-        private static QuestionResponseDto BuildQuestionResponseDto(QuestionEntity questionEntity)
-        {
-            var QuizResponsesDto = questionEntity.Quizzes.Select(q => new QuizResponseDto(q.Id, q.Name, q.CreatedAt, q.UpdatedAt, null)).ToList();
-            return new QuestionResponseDto(questionEntity.Id, questionEntity.QuestionText, questionEntity.QuestionAnswer, questionEntity.CreatedAt, questionEntity.UpdatedAt, QuizResponsesDto);
-
-        }
     }
 }
+// TODO add needed business logic comments
