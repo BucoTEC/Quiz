@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Quiz.Bll.Dtos;
 using Quiz.Bll.Exceptions;
 using Quiz.Bll.Helpers;
@@ -78,7 +73,6 @@ namespace Quiz.Bll.Services.QuizService
             await _unitOfWork.CompleteAsync();
 
             return BuildQuizResponse(newQuiz);
-
         }
 
         /// <inheritdoc/>
