@@ -61,7 +61,3 @@ app.MapControllers();
 app.UseExceptionHandler();
 
 app.Run();
-// test all routes
-// add readme file with detail swagger spec and basic db diagram
-// add auto mapper
-// add maybe user asp identity
