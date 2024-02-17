@@ -35,9 +35,7 @@ public class QuestionService(IUnitOfWork unitOfWork) : IQuestionService
         var totalCountOfQuestions = await _unitOfWork.QuestionRepository.CountAsync(countSpec);
         var question = await _unitOfWork.QuestionRepository.ListAsync(spec);
 
-        var data = question.Select(BuildQuestionResponseDto);
-
-        return new Pagination<QuestionResponseDto>(searchQuestionsQuery.PageIndex, searchQuestionsQuery.PageSize, totalCountOfQuestions, data);
+        return new Pagination<QuestionResponseDto>(searchQuestionsQuery.PageIndex, searchQuestionsQuery.PageSize, totalCountOfQuestions, question.Select(BuildQuestionResponseDto));
     }
 
     /// <inheritdoc/>
