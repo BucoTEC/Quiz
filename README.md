@@ -26,6 +26,13 @@ The application uses a code-first approach for database access and design,
 leveraging EF Core with a PostgreSQL driver. In development mode, it
 automatically applies the initial migration.
 
+## CI-CD
+
+The repository at its current state is not configured to deploy to cretin
+infrastructure but it contains a build and test pipeline ( builds the dotnet
+application and runs the unit tests ) that triggers on creation of pull request
+and merge to give basic continues integration advantages to the application
+
 ## Containerization
 
 The application is containerized for ease of cross-platform deployment and
