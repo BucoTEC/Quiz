@@ -13,7 +13,7 @@ public class SearchQuestionsQuery : BaseSearchQuery
     public string SearchByQuestionText
     {
         get => _search ?? "";
-        set => _search = value.ToLower();
+        set => _search = value.ToLower().Trim();
     }
 
     /// <summary>

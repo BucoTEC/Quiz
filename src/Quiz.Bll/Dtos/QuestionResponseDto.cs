@@ -19,7 +19,13 @@ public class QuestionResponseDto
         Id = id;
         QuestionText = questionText;
         QuestionAnswer = questionAnswer;
-        Quizzes = quizzes;
+        Quizzes = quizzes?.Select(q => new InnerQuizDto
+        {
+            Id = q.Id,
+            Name = q.Name,
+            CreatedAt = q.CreatedAt,
+            UpdatedAt = q.UpdatedAt
+        }).ToList();
         CreatedAt = createdAt;
         UpdatedAt = updatedAt;
     }
@@ -42,7 +48,7 @@ public class QuestionResponseDto
     /// <summary>
     /// Gets or sets the list of quizzes associated with the question.
     /// </summary>
-    public List<QuizResponseDto>? Quizzes { get; set; }
+    public List<InnerQuizDto>? Quizzes { get; set; }
 
     /// <summary>
     /// Gets or sets the date and time when the question was created.
@@ -53,4 +59,27 @@ public class QuestionResponseDto
     /// Gets or sets the date and time when the question was last updated.
     /// </summary>
     public DateTime? UpdatedAt { get; private set; }
+
+    public class InnerQuizDto
+    {
+        /// <summary>
+        /// Gets the unique identifier of the quiz.
+        /// </summary>
+        public Guid Id { get; set; }
+
+        /// <summary>
+        /// Gets or sets the name of the quiz.
+        /// </summary>
+        public string Name { get; set; } = string.Empty;
+
+        /// <summary>
+        /// Gets the date and time when the quiz was created.
+        /// </summary>
+        public DateTime CreatedAt { get; set; }
+
+        /// <summary>
+        /// Gets the date and time when the quiz was last updated.
+        /// </summary>
+        public DateTime? UpdatedAt { get; set; }
+    }
 }

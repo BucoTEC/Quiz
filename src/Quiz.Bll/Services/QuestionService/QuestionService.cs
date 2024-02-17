@@ -60,6 +60,11 @@ public class QuestionService(IUnitOfWork unitOfWork) : IQuestionService
         // verify that question with this id exists
         var existingQuestion = await _unitOfWork.QuestionRepository.GetByIdAsync(id) ?? throw new NotFoundException($"No question found with id: {id}");
 
+        // verify that same question does not already exists
+        var spec = new QuestionWithQuizzesSpecification(updateQuestionDto.QuestionText);
+        var existingQuestionWithSameName = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec);
+        if (existingQuestionWithSameName is not null) throw new BadRequestException($"Question with same text already exists, existing question id {existingQuestion.Id}");
+
         // update and save new question
         existingQuestion.QuestionText = updateQuestionDto.QuestionText;
         existingQuestion.QuestionAnswer = updateQuestionDto.QuestionAnswer;
