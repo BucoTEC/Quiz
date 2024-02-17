@@ -12,7 +12,7 @@ services:
       - 5075:5075
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__DatabaseConnection=Host=postgres;Port=5432;Username=postgres;Password=0401;Database=quiz-dev-sql
+      - ConnectionStrings__DatabaseConnection=Host=postgres;Port=5432;Username=postgres;Password=postgres;Database=postgres
     depends_on:
       - postgres
 
@@ -21,8 +21,8 @@ services:
     restart: always
     environment:
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: 0401
-      POSTGRES_DB: quiz-dev-sql
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     ports:
       - "5432:5432"
 
@@ -30,8 +30,8 @@ services:
     image: dpage/pgadmin4
     restart: always
     environment:
-      PGADMIN_DEFAULT_EMAIL: your_email@example.com
-      PGADMIN_DEFAULT_PASSWORD: your_pgadmin_password
+      PGADMIN_DEFAULT_EMAIL: admin@mail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
     ports:
       - "8080:80"
     depends_on:
