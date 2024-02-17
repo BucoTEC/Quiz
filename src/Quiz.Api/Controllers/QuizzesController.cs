@@ -64,7 +64,7 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
     /// </summary>
     /// <remarks>
     /// To create a new quiz, provide the necessary data in the request body.
-    /// If you want to reuse existing questions and add them to the quiz, include their IDs in the <c>QuestionsIds</c> list of the request payload.
+    /// If you want to reuse existing questions and add them to the quiz, include their IDs in the <c>QuestionsIds</c> list of the request payload, any id provided that does not belong to an existing quiz will just be ignored.
     /// If you want to create brand new questions and add them to the quiz during quiz creation, add them to the <c>Questions</c> list in the request payload.
     /// The request should follow the schema defined by the <c>CreateQuizDto</c> class.
     /// After successful creation, the newly created quiz is returned along with a status code of 201 (Created).
