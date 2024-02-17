@@ -45,6 +45,7 @@ public class QuestionsController(IQuestionService questionService) : ControllerB
     /// - <c>PageIndex</c>: The index of the page to retrieve (default is 1).
     /// - <c>PageSize</c>: The number of items per page (default is 6, maximum is 50).
     /// - <c>SearchByQuestionText</c>: Search by question text (case insensitive).
+    /// - <c>Sort</c>: The field to sort the results by its creation date. Accepted values are "oldFirst" or "newFirst". If not provided, default sorting is applied which is "newFirst".
     /// - <c>IncludeQuizzes</c>: Indicates whether to include quizzes associated with the questions in the result (default is false).
     /// After a successful search, a paginated list of questions matching the search criteria is returned.
     /// </remarks>

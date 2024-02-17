@@ -47,6 +47,7 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
     /// - <c>PageSize</c>: The number of items per page (default is 6, maximum is 50).
     /// - <c>SearchByQuizName</c>: Search by quiz name (case insensitive).
     /// - <c>IncludeQuestions</c>: Indicates whether to include questions associated with the quizzes in the result (default is false).
+    /// - <c>Sort</c>: The field to sort the results by its creation date. Accepted values are "oldFirst" or "newFirst". If not provided, default sorting is applied which is "newFirst".
     /// After a successful search, a paginated list of quizzes matching the search criteria is returned.
     /// </remarks>
     /// <param name="searchQuizzesQuery">The search criteria for quizzes.</param>
