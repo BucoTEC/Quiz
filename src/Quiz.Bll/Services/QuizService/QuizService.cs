@@ -34,7 +34,7 @@ public class QuizService(IUnitOfWork unitOfWork, QuizExporterManager quizExporte
 
         var totalCountOfQuizzes = await _unitOfWork.QuizRepository.CountAsync(countSpec);
         var quizzes = await _unitOfWork.QuizRepository.ListAsync(spec);
-        var data = quizzes.Select(quiz => BuildQuizResponse(quiz));
+        var data = quizzes.Select(BuildQuizResponse);
 
         return new Pagination<QuizResponseDto>(quizSearchParams.PageIndex, quizSearchParams.PageSize, totalCountOfQuizzes, data);
     }
@@ -57,7 +57,7 @@ public class QuizService(IUnitOfWork unitOfWork, QuizExporterManager quizExporte
         var questionTexts = createQuizDto.Questions?.Select(q => q.QuestionText).ToList() ?? [];
         var questionTextSpec = new QuestionsSearchSpecification(questionTexts);
         var existingQuestionByName = await _unitOfWork.QuestionRepository.ListAsync(questionTextSpec);
-        if (existingQuestionByName.Any()) throw new BadRequestException("Question already exits reuse the question by forwarding its id in the create quiz request");
+        if (existingQuestionByName.Any()) throw new BadRequestException($"Question already exits reuse the question by forwarding its id ({existingQuestionByName[0].Id}) in the create quiz request");
 
 
         // reuse existing questions by searching with forwarder questions ids
@@ -82,10 +82,10 @@ public class QuizService(IUnitOfWork unitOfWork, QuizExporterManager quizExporte
         var quiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(quizSpec) ?? throw new NotFoundException($"No quiz found with id:{id}");
 
 
-        // check if there is already a quiz with the same name
+        // check if there is already a different quiz with the same name
         var spec = new QuizWithQuestionsSpecification(updateQuizDto.Name);
         var existingQuiz = await _unitOfWork.QuizRepository.GetEntityWithSpec(spec);
-        if (existingQuiz != null) throw new BadRequestException($"Quiz with this name already exists, quiz id: {existingQuiz.Id}");
+        if (existingQuiz != null && existingQuiz.Id != quiz.Id) throw new BadRequestException($"Quiz with this name already exists, quiz id: {existingQuiz.Id}");
 
 
         // get questions of quiz that is being update
@@ -120,7 +120,7 @@ public class QuizService(IUnitOfWork unitOfWork, QuizExporterManager quizExporte
 
         // verify that exporter with this name exists
         var availableExporters = _quizExporter.GetAvailableExporters();
-        if (!availableExporters.Contains(exporter)) throw new BadRequestException();
+        if (!availableExporters.Contains(exporter)) throw new BadRequestException($"No exporter found under the name {exporter}");
 
         var exportedQuiz = _quizExporter.ExportQuizAsync(exporter, quiz);
         return new ExportQuizResponseDto { QuizName = quiz.Name, QuizData = exportedQuiz.Data, DataType = exportedQuiz.DataType, ResponseFormat = exportedQuiz.ResponseFormat };

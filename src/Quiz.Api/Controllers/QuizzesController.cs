@@ -139,7 +139,7 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
     public async Task<IActionResult> ExportQuiz(Guid quizId, string exporter)
     {
         var exportQuizResponseDto = await _quizService.ExportQuiz(exporter, quizId);
-        return File(exportQuizResponseDto.QuizData, exportQuizResponseDto.ResponseFormat, $"quiz_{exportQuizResponseDto.QuizName}.{exportQuizResponseDto.DataType}");
+        return File(exportQuizResponseDto.QuizData, exportQuizResponseDto.ResponseFormat, $"Quiz {exportQuizResponseDto.QuizName}.{exportQuizResponseDto.DataType}");
     }
 
     /// <summary>

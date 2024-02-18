@@ -29,5 +29,5 @@ public abstract class BaseSearchQuery
     /// <summary>
     /// Gets or sets the field to sort the results by.
     /// </summary>
-    public string? Sort { get; set; }
+    public string? Sort { get; set; } = "newFirst";
 }
