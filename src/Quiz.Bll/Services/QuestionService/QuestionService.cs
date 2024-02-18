@@ -63,7 +63,7 @@ public class QuestionService(IUnitOfWork unitOfWork) : IQuestionService
         // verify that same question does not already exists
         var spec = new QuestionWithQuizzesSpecification(updateQuestionDto.QuestionText);
         var existingQuestionWithSameName = await _unitOfWork.QuestionRepository.GetEntityWithSpec(spec);
-        if (existingQuestionWithSameName is not null) throw new BadRequestException($"Question with same text already exists, existing question id {existingQuestion.Id}");
+        if (existingQuestionWithSameName != null && existingQuestionWithSameName.Id != existingQuestion.Id) throw new BadRequestException($"Question with same text already exists, existing question id {existingQuestion.Id}");
 
         // update and save new question
         existingQuestion.QuestionText = updateQuestionDto.QuestionText;

@@ -126,7 +126,7 @@ public class QuizzesController(IQuizService quizService) : ControllerBase
     }
 
     /// <summary>
-    /// Exports a quiz to CSV format using the specified exporter.
+    /// Exports a quiz to selected format using the specified exporter.
     /// </summary>
     /// <param name="quizId">The unique identifier of the quiz to export.</param>
     /// <param name="exporter">The name of the exporter to use.</param>
