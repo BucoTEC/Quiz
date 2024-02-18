@@ -38,7 +38,7 @@ and merge to give basic continues integration advantages to the application
 The application is containerized for ease of cross-platform deployment and
 testing.
 
-## How to Run Locally with Docker
+## Run Locally with Docker and docker-compose
 
 If your machine has the Docker daemon installed, you can run the application
 using the following steps:
@@ -62,6 +62,10 @@ sure its alway up to date.
 
 After docker finishes spinning up the needed containers you can access the API
 on `http://localhost:5075/swagger/index.html`
+
+When you are finished testing be sure to remember to run `docker-compose down`
+so that the docker demon and containers to not use excess resurges of you
+machine.
 
 ## Run Locally on Machine
 
