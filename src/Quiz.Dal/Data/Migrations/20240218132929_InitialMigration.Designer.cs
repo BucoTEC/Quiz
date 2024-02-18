@@ -12,8 +12,8 @@ using Quiz.Dal.Data;
 namespace Quiz.Dal.Data.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240213200359_initial")]
-    partial class initial
+    [Migration("20240218132929_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

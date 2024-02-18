@@ -62,7 +62,7 @@ included to rebuild the docker image for the quiz api container just to make
 sure its alway up to date.
 
 After docker finishes spinning up the needed containers you can access the API
-on `http://localhost:5075/swagger/index.html`
+swagger ui on `http://localhost:5075/swagger/index.html`
 
 When you are finished testing be sure to remember to run `docker-compose down`
 so that the docker demon and containers to not use excess resurges of you
@@ -76,6 +76,10 @@ To run the application locally without Docker, follow these steps:
 2. Install and configure PostgreSQL.
 3. Update the `appsettings.json` file to point to the correct PostgreSQL
    database of your choice.
+4. Run `dotnet run` od `dotnet watch` under the Quiz.Api directory
+
+After that you can access the API swagger ui on
+`http://localhost:5075/swagger/index.html`
 
 ## Documentation
 
