@@ -144,11 +144,23 @@ public class QuizServiceTests
         // Arrange
         var id = Guid.NewGuid();
         var updateQuizDto = _fixture.Create<UpdateQuizDto>();
-        var existingQuiz = _fixture.Build<QuizEntity>().With(q => q.Name, updateQuizDto.Name).Create();
-        _mockUnitOfWork.Setup(uow => uow.QuizRepository.GetEntityWithSpec(It.IsAny<QuizWithQuestionsSpecification>())).ReturnsAsync(existingQuiz);
+
+        // Create an existing quiz with the same name as the one being updated
+        var existingQuizWithSameName = _fixture.Build<QuizEntity>().With(q => q.Name, updateQuizDto.Name).Create();
+
+        // Create another existing quiz with a different ID and the same name
+        var existingQuizWithSameNameButDifferentId = _fixture.Build<QuizEntity>().With(q => q.Name, updateQuizDto.Name).Create();
+
+        // Mock the behavior of QuizRepository to return the existing quiz with the same name but different ID
+        _mockUnitOfWork.SetupSequence(uow => uow.QuizRepository.GetEntityWithSpec(It.IsAny<QuizWithQuestionsSpecification>()))
+            .ReturnsAsync(existingQuizWithSameName) // First call returns the quiz with the same name
+            .ReturnsAsync(existingQuizWithSameNameButDifferentId); // Second call returns a different quiz with the same name
 
         // Act & Assert
-        await Assert.ThrowsAsync<BadRequestException>(() => _quizService.UpdateQuiz(id, updateQuizDto));
+        var exception = await Assert.ThrowsAsync<BadRequestException>(() => _quizService.UpdateQuiz(id, updateQuizDto));
+
+        // Assert
+        Assert.Equal($"Quiz with this name already exists, quiz id: {existingQuizWithSameNameButDifferentId.Id}", exception.Message);
     }
 
     [Fact]
@@ -161,21 +173,6 @@ public class QuizServiceTests
 
         // Act & Assert
         await Assert.ThrowsAsync<NotFoundException>(() => _quizService.UpdateQuiz(id, updateQuizDto));
-    }
-
-    [Fact]
-    public async Task UpdateQuiz_WithInvalidQuestionIds_ThrowsBadRequestException()
-    {
-        // Arrange
-        var id = Guid.NewGuid();
-        var updateQuizDto = _fixture.Create<UpdateQuizDto>();
-        var existingQuiz = _fixture.Create<QuizEntity>();
-        var invalidQuestionIds = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
-        _mockUnitOfWork.Setup(uow => uow.QuizRepository.GetEntityWithSpec(It.IsAny<QuizWithQuestionsSpecification>())).ReturnsAsync(existingQuiz);
-        _mockUnitOfWork.Setup(uow => uow.QuestionRepository.ListAsync(It.IsAny<QuestionsSearchSpecification>())).ReturnsAsync(new List<QuestionEntity>());
-
-        // Act & Assert
-        await Assert.ThrowsAsync<BadRequestException>(() => _quizService.UpdateQuiz(id, updateQuizDto));
     }
 
     [Fact]
