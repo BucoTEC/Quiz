@@ -28,10 +28,11 @@ automatically applies the initial migration.
 
 ## CI-CD
 
-The repository at its current state is not configured to deploy to cretin
-infrastructure but it contains a build and test pipeline ( builds the dotnet
-application and runs the unit tests ) that triggers on creation of pull request
-and merge to give basic continues integration advantages to the application
+The repository at its current state is not configured to deploy the code to any
+specific infrastructure but it contains a build and test pipeline ( builds the
+dotnet application and runs the unit tests ) that triggers on creation of pull
+request and merge to give basic continues integration advantages to the
+application.
 
 ## Containerization
 
