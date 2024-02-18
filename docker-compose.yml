@@ -14,7 +14,10 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__DatabaseConnection=Host=postgres;Port=5432;Username=postgres;Password=postgres;Database=postgres
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy # Wait until PostgreSQL is healthy
+      pgadmin:
+        condition: service_started # Start the pgAdmin service concurrently
 
   postgres:
     image: postgres
@@ -25,6 +28,13 @@ services:
       POSTGRES_DB: postgres
     ports:
       - "5432:5432"
+    volumes:
+      - ./postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"] # Check if PostgreSQL is ready
+      interval: 10s
+      retries: 5
+      timeout: 5s
 
   pgadmin:
     image: dpage/pgadmin4
@@ -35,4 +45,5 @@ services:
     ports:
       - "8080:80"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy # Wait until PostgreSQL is healthy

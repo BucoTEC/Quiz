@@ -16,6 +16,7 @@ vscode
 *.user
 *.userosscache
 *.sln.docstates
+postgres-data/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs

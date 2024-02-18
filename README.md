@@ -44,14 +44,24 @@ If your machine has the Docker daemon installed, you can run the application
 using the following steps:
 
 1. Navigate to the root directory of the project.
-2. Execute the command `docker-compose up -d`.
+2. Execute the command `docker-compose up -d --build`.
    - This command will spin up the containerized application based on the
      Dockerfile located under the `Quiz.Api` directory.
    - It will also start PostgreSQL and pgAdmin for database management.
 3. Additional configuration details for the container instances can be found in
    the `docker-compose.yml` file.
-4. Note that volumes are not configured by default, and data will not persist
-   between container restarts.
+4. Note that volumes for the postgres container are configured by default to
+   write to the same directory and the volume data will not be registered by
+   version control due to the configuration of the gitignore.
+
+The initial run up of the docker-compose wil take a bit of time to pull all the
+needed images, after that all other runs will be much faster. Note that in the
+execute command listed at the begging of this section the flag `--build` is
+included to rebuild the docker image for the quiz api container just to make
+sure its alway up to date.
+
+After docker finishes spinning up the needed containers you can access the API
+on `http://localhost:5075/swagger/index.html`
 
 ## Run Locally on Machine
 
