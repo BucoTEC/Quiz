@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace Quiz.Bll.SearchQueries;
 
 /// <summary>
@@ -10,6 +12,7 @@ public abstract class BaseSearchQuery
     /// <summary>
     /// Gets or sets the index of the page to retrieve.
     /// </summary>
+    [Range(1, int.MaxValue, ErrorMessage = "Page index must be a positive integer.")]
     public int PageIndex { get; set; } = 1;
 
     private int _pageSize = 6;
@@ -20,7 +23,7 @@ public abstract class BaseSearchQuery
     public int PageSize
     {
         get => _pageSize;
-        set => _pageSize = (value > MaxPageSize) ? MaxPageSize : value;
+        set => _pageSize = (value > MaxPageSize || value < 1) ? MaxPageSize : value;
     }
 
     /// <summary>
